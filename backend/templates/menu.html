@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu</title>
+</div>
+
+</head>
+<body>
+    <h1>Our Pizza Menu</h1>
+    <form method="POST" action="{{ url_for('menu') }}">
+        {% for pizza in pizzas %}
+            <div>
+                <label>{{ pizza.name }} - ${{ pizza.price }}</label>
+                <input type="number" name="{{ pizza.name }}" min="0" value="0">
+            </div>
+        {% endfor %}
+        <button type="submit">Add to Order</button>
+    </form>
+
+</body>
+</html>

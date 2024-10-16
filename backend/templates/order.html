@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Order</title>
+</head>
+<body>
+    <h1>Your Order</h1>
+    <p>Estimated completion time: {{ estimated_time }}</p>
+    <ul>
+        {% for order in orders %}
+            <li>{{ order }}</li>
+        {% endfor %}
+    </ul>
+    <p>Your order has been placed!</p>
+</body>
+</html>
