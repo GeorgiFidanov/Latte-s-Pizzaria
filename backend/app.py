@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
+from datetime import datetime, timedelta
 
 
 load_dotenv()
@@ -45,9 +46,12 @@ def login():
             flash('Too many login attempts. Please try again later.', 'danger')
             return redirect(url_for('login'))
 
-        if user and user['password'] == password:
+        if user and check_password_hash(user['password'], password):
             session['username'] = username
             login_attempts[username] = 0  # Reset attempts on successful login
+
+            if username == 'admin':
+                return redirect(url_for('admin'))
             return redirect(url_for('menu'))
         else:
             login_attempts[username] = login_attempts.get(username, 0) + 1
@@ -64,15 +68,17 @@ def forgot_password():
 
         if user:
             token = os.urandom(24).hex()  # Generating a simple reset token
+            users_collection.update_one({'_id': user['_id']}, {'$set': {'reset_token': token}})
             reset_url = url_for('reset_password', token=token, _external=True)
 
             msg = Message('Password Reset Request',
-                          sender='noreply@pizzeria.com',
+                          sender='noreply@lattespizzeria.com',
                           recipients=[email])
             msg.body = f'To reset your password, click the following link: {reset_url}'
             mail.send(msg)
 
             flash('An email has been sent with instructions to reset your password.', 'info')
+
         else:
             flash('Email address not found.', 'danger')
 
@@ -81,33 +87,79 @@ def forgot_password():
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    user = users_collection.find_one({'reset_token': token})
+
+    if not user:
+        flash('Invalid or expired reset token.', 'danger')
+        return redirect(url_for('forgot_password'))
+
     if request.method == 'POST':
         new_password = request.form['new_password']
         confirm_password = request.form['confirm_password']
 
         if new_password == confirm_password:
-            # Logic to update the user's password in the database
-            flash('Your password has been updated.', 'success')
+            hashed_password = generate_password_hash(new_password)
+            users_collection.update_one(
+                {'_id': user['_id']},
+                {'$set': {'password': hashed_password, 'reset_token': None}}
+            )
+
+            flash('Your password has been updated successfully.', 'success')
             return redirect(url_for('login'))
         else:
-            flash('Passwords do not match.', 'danger')
+            flash('Passwords do not match. Please try again.', 'danger')
 
     return render_template('reset_password.html')
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
-        if users_collection.find_one({'username': username}):
-            return 'Username already exists'
-        hashed_password = generate_password_hash(password)
-        users_collection.insert_one({'username': username, 'password': hashed_password})
-        session['username'] = username
-        return redirect(url_for('menu'))
-    return render_template('register.html')
+        confirm_password = request.form['confirm_password']
+        address = request.form['address']
+        gender = request.form['gender']
+        terms = request.form.get('terms')  # This will be 'on' if checked, otherwise None
+        ads = request.form.get('ads')  # This will be 'on' if checked, otherwise None
 
+        # Check if passwords match
+        if password != confirm_password:
+            flash('Passwords do not match. Please try again.', 'danger')
+            return render_template('register.html')
+
+        # Check if the username already exists
+        if users_collection.find_one({'username': username}):
+            flash('Username already exists. Please choose a different one.', 'danger')
+            return render_template('register.html')
+
+        # Check if email already exists
+        if users_collection.find_one({'email': email}):
+            flash('Email already registered. Please use a different one.', 'danger')
+            return render_template('register.html')
+
+        # Hash the password for security
+        hashed_password = generate_password_hash(password)
+
+        # Save user data to the database
+        users_collection.insert_one({
+            'username': username,
+            'email': email,
+            'password': hashed_password,
+            'address': address,
+            'gender': gender,
+            'ad_preferences': bool(ads),
+            'agreed_to_terms': bool(terms)
+        })
+
+        # Log in the user automatically and redirect to the menu page
+        session['username'] = username
+        flash('Registration successful! Welcome to the pizzeria.', 'success')
+        return redirect(url_for('menu'))
+
+    return render_template('register.html')
 
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
@@ -116,22 +168,42 @@ def menu():
         {'name': 'Pepperoni', 'price': 10},
     ]
     if request.method == 'POST':
-        order = {pizza['name']: int(request.form.get(pizza['name'], 0)) for pizza in pizzas}
-        session['order'] = order
+        order_item = {pizza['name']: int(request.form.get(pizza['name'], 0)) for pizza in pizzas}
+        session['order'] = order_item
         return redirect(url_for('order'))
 
     return render_template('menu.html', pizzas=pizzas)
 
+
+current_id = 0
+reset_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
+def get_id():
+    global current_id, reset_time
+    now = datetime.now()
+
+    if now >= reset_time:
+        current_id = 0
+        reset_time = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
+
+    current_id += 1
+    return current_id
 
 
 @app.route('/order', methods=['GET', 'POST'])
 def order():
     if request.method == 'POST':
         order_details = request.form.getlist('pizzas')
-        estimated_time = '20 minutes'  # Static estimated time for now
-        orders_collection.insert_one({'username': session['username'], 'order_details': order_details, 'status': 'Pending'})
+        order_time = datetime.now()
+        estimated_time = order_time + timedelta(minutes=20) # +20 minutes for now
+        order_id = get_id()
+
+        orders_collection.insert_one({'username': session['username'],'order_id':order_id, 'order_time':order_time,
+                    'order_details': order_details,'status': 'Pending', 'estimated_time': estimated_time})
+
         return redirect(url_for('thank_you'))
-    return render_template('order.html', orders=session.get('orders'), estimated_time='20 minutes')
+
+    return render_template('order.html', orders=session.get('orders'),
+                           estimated_time=session.get('estimated_time'))
 
 
 @app.route('/thank_you')
@@ -148,6 +220,25 @@ def about():
 def logout():
     session.pop('username', None)
     return redirect(url_for('index'))
+
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    if 'username' not in session or session['username'] != 'admin':
+        flash('You do not have permission to view this page.', 'danger')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        order_id = request.form.get('order_id')
+        new_status = request.form.get('status')
+        orders_collection.update_one({'order_id':order_id}, {'$set': {'status': new_status}})
+
+    one_hour_ago = datetime.now() - timedelta(hours=1)
+    recent_orders = list(orders_collection.find({'timestamp': {'$gte': one_hour_ago}}))
+
+    return render_template('admin.html', orders=recent_orders)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
