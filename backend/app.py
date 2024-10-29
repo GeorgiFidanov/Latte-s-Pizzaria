@@ -120,6 +120,13 @@ def login():
     return render_template('login.html')
 
 
+@app.route('/guest_order')
+def guest_order():
+    session['username'] = 'Guest'  # Set guest username
+    session['guest'] = True  # Set guest flag in session
+    return redirect(url_for('menu'))
+
+
 @app.route('/logout')
 def logout():
     session.pop('username', None)
@@ -188,6 +195,11 @@ def delete_profile():
 
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
+
+    if 'username' not in session:
+        session['username'] = 'Guest'
+        session['guest'] = True
+        
     pizzas = [  # Menu items
         {'name': 'Margherita', 'price': 8},
         {'name': 'Pepperoni', 'price': 10},
@@ -238,7 +250,7 @@ def order():
         
         elif payment_method == 'cash':
 
-            return redirect(url_for('cash_payment_loading', order_id=order_id))
+            return redirect(url_for('cash_payment', order_id=order_id))
 
     return render_template('order.html', order=order)
 
@@ -260,9 +272,16 @@ def simulate_card_payment(order_id):
     return redirect(url_for('thank_you'))
 
 
-@app.route('/cash_payment_loading/<order_id>')
-def cash_payment_loading(order_id):
-    return render_template('cash_payment_loading.html', order_id=order_id)
+@app.route('/cash_payment/<order_id>')
+def cash_payment(order_id):
+    order = orders_collection.find_one({'order_id': int(order_id)})
+
+    # Check if the order has been marked as 'Paid' by the admin
+    if order and order['status'] == 'Paid':
+        return redirect(url_for('thank_you'))
+
+    return render_template('cash_payment.html')
+
 
 
 @app.route('/thank_you')

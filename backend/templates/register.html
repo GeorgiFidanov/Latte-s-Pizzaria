@@ -48,7 +48,16 @@
     </form>
 
     <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a>.</p>
+    <p>Or <a href="{{ url_for('guest_order') }}">Continue as Guest</a></p>
 
-
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 </body>
 </html>

@@ -24,7 +24,7 @@
         <div class="main-content-content">
             <h1>Mario and Luigi Pizzeria</h1>
             <p>Experience the best pizzas made with love!</p>
-            <a class="order-button" href="{{ url_for('order') }}">Order now</a>
+            <a class="order-button" href="{{ url_for('menu') }}">Order now</a>
         </div>
     </main>
 
@@ -32,6 +32,6 @@
         <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
     </footer>
 
-    <a href="{{ url_for('login') }}">Login</a> | <a href="{{ url_for('register') }}">Register</a>
+    <a href="{{ url_for('login') }}">Login</a> | <a href="{{ url_for('register') }}">Register</a> | <a href="{{ url_for('guest_order') }}">Continue as Guest</a>
 </body>
 </html>
