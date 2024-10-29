@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mario and Luigi Pizzeria</title>
-    <link rel="stylesheet" type="text/css" href="static\style.css"> <!-- Ensure the path is correct -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
 <body>
     <header class="header">
         <div class="logo">
-            <img src="C:\Users\frank\Desktop\pizzatestz\static\logo.png" alt="Pizzeria Logo"> <!-- Update with logo path -->
+            <img src="C:\Users\frank\Desktop\pizzatestz\static\logo.png" alt="Pizzeria Logo">
         </div>
         <nav class="navbar">
             <a href="{{ url_for('menu') }}">Menu</a>
