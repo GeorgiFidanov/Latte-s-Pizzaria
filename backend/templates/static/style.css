@@ -1,0 +1,87 @@
+/* Reset some default browser styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Styling for the header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #333;
+}
+
+.header .logo img {
+    height: 50px;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 15px;
+    font-size: 18px;
+}
+
+.navbar a:hover {
+    color: #ff5733;
+}
+
+/* Main content styling */
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 70vh;
+    background-color: #f9f9f9;
+	background-image: url(for image background); 
+    background-size: cover;
+    background-repeat: no-repeat; /* Change to `repeat` if you want it tiled across the page */
+    background-position: center;
+}
+
+.main-content-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-content h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.main-content p {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.order-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #ff5733;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+.order-button:hover {
+    background-color: #cc4629;
+}
+
+/* Footer styling */
+footer {
+    padding: 15px;
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    font-size: 14px;
+}
