@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Menu</title>
-</div>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <title>Menu - Mario and Luigi Pizzeria</title>
 </head>
 <body>
     <h1>Our Pizza Menu</h1>
@@ -18,6 +19,53 @@
     </form>
     <a href="{{ url_for('logout') }}">Logout</a>
     <a href="{{ url_for('delete_profile') }}">Delete Profile</a>
+
+    <header class="header">
+        <div class="logo">
+            <img src="static/logo1.png" alt="Pizzeria Logo"> <!-- Update with logo path -->
+        </div>
+        <nav class="navbar">
+            <a href="{{ url_for('menu') }}" class="active">Menu</a>
+            <a href="{{ url_for('about') }}">About Us</a>
+            <a href="{{ url_for('login') }}">Sign In</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1>Our Menu</h1>
+        <div class="menu-container">
+            <table class="pizza-menu">
+                <thead>
+                    <tr>
+                        <th>Pizza Name</th>
+                        <th>Description</th>
+                        <th>Picture</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Pizza Margarita</td>
+                        <td>A classic sicilian pizza topped with fresh mozzarella cheese and basil.</td>
+                        <td><img src="static/pizza1.webp" alt="Mozzarella Pizza" class="pizza-image"></td>
+                        <td><input type="number" name="mozzarella" min="0" max="3" value="0" class="quantity-input"></td>
+                    </tr>
+                    <tr>
+                        <td>Pizza Pepperoni</td>
+                        <td>Loaded with spicy pepperoni from Sicily and gooey mozzarella cheese.</td>
+                        <td><img src="static/pizza2.webp" alt="Pepperoni Pizza" class="pizza-image"></td>
+                        <td><input type="number" name="pepperoni" min="0" max="3" value="0" class="quantity-input"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button type="submit" class="order-button">Confirm order</button>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
+    </footer>
 
 </body>
 </html>

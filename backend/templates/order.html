@@ -1,9 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Order</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <title>Your Order - Mario and Luigi Pizzeria</title>
 </head>
 <body>
+    <header class="header">
+        <div class="logo">
+            <img src="static/logo1.png" alt="Pizzeria Logo">
+        </div>
+        <nav class="navbar">
+            <a href="{{ url_for('menu') }}">Menu</a>
+            <a href="{{ url_for('about') }}">About Us</a>
+            <a href="{{ url_for('login') }}">Sign In</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <p class="order-confirmation">Your order has been placed!</p>
+        <p>Estimated completion time: {{ estimated_time }}</p>
+
+        <div class="order-container">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Pizza Name</th>
+                        <th>Quantity</th>
+                        <th>Price per Pizza</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.name }}</td>
+                        <td>{{ order.quantity }}</td>
+                        <td>${{ order.price_per_item }}</td>
+                        <td>${{ order.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+
     <h1>Your Order</h1>
     <ul>
         {% for pizza, quantity in order.items() %}
@@ -26,5 +70,9 @@
         </ul>
     {% endif %}
     {% endwith %}
+
+    <footer>
+        <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
+    </footer>
 </body>
 </html>

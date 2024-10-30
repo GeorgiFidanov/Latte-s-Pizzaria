@@ -1,15 +1,49 @@
+/* Reset some default browser styling */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* =============== INDEX PAGE STYLES =============== */
+
+/* Set up the body to act as a flex container */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures the body is at least as tall as the viewport */
+    background-image: url('back1.jpg'); /* Background image */
+    background-size: cover; /* Ensures the image covers the entire background */
+    background-position: center;
+    background-attachment: fixed; /* Keeps the image fixed as you scroll */
+    position: relative;
+}
+
+/* Add an overlay to create transparency */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    z-index: -1; /* Places overlay behind all content */
+}
+
+/* Ensure the main content and header stay above the overlay */
+.header, .main-content, footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* Styling for the header */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: #333;
+    background-color: #0f0d0d;
 }
 
 .header .logo img {
@@ -24,19 +58,17 @@
 }
 
 .navbar a:hover {
-    color: #ff5733;
+    color: #fcf8f8;
 }
 
+/* Main content styling */
 .main-content {
     display: flex;
+    flex: 1; /* Fills available space, pushing footer down if needed */
     justify-content: center;
     align-items: center;
     text-align: center;
-    height: 70vh;
-    background-color: #f9f9f9;
-	/*background-image: url(for image background); */
-    background-size: cover;
-    background-repeat: no-repeat; /* `repeat` if you want it tiled across the page */
+    background-repeat: no-repeat;
     background-position: center;
 }
 
@@ -50,34 +82,243 @@
     font-size: 48px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #333;
+    color: #fff;
 }
 
 .main-content p {
     font-size: 24px;
     margin-bottom: 20px;
-    color: #555;
+    color: #fff;
 }
 
 .order-button {
     display: inline-block;
     padding: 15px 30px;
-    background-color: #ff5733;
-    color: #fff;
+    background-color: #f0e9e7;
+    color: #0e0c0c;
     text-decoration: none;
     border-radius: 5px;
-    font-size: 18px;
-    transition: background-color 0.3s ease;
+}
+
+/* Footer styling */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #0e0e0e; /* Dark background */
+    color: #fff; /* White text */
+    text-align: center;
+    padding: 7px 0;
+    font-size: 14px;
+}
+
+/* Centering the main content */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the left */
+    padding: 20px; /* Add padding to the main content */
+}
+
+/* =============== MENU PAGE STYLES =============== */
+
+/* Menu container to control width */
+.menu-container {
+    max-width: 800px; /* Set maximum width for the table */
+    width: 100%; /* Allow it to be responsive */
+    margin: 20px 0; /* Space above and below the table */
+}
+
+/* Pizza menu styling */
+.pizza-menu {
+    width: 100%; /* Make the table take full width of its container */
+    border-collapse: collapse; /* Remove gaps between cells */
+}
+
+/* Table header styling */
+.pizza-menu thead {
+    background-color: #0e0c0c;
+    color: #fff;
+}
+
+/* Table cell styling */
+.pizza-menu th, .pizza-menu td {
+    padding: 15px; /* Add space within cells */
+    border: 1px solid #ccc; /* Add borders to cells */
+    background-color: #0e0c0c;
+    text-align: left; /* Left-align text */
+    color: #fff; /* Set text color to white */
+}
+
+/* Pizza image styling */
+.pizza-image {
+    width: 100px; /* Set a fixed width for images */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Input styling */
+.quantity-input {
+    width: 40px; /* Set input width to be smaller */
+}
+
+/* Button styling */
+.order-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #f0e9e7;
+    color: #0a0a0a;
+    text-decoration: none;
+    border-radius: 5px;
 }
 
 .order-button:hover {
-    background-color: #cc4629;
+    background-color: #cc4629; /* Darken on hover */
+}
+/* =============== ORDER PAGE STYLES =============== */
+
+.order-container {
+    max-width: 800px;
+    margin-left: 1px; /* Centers the container on the page with some margin */
+    padding: 20px;
+    background-color: #1c1c1c; /* Slightly lighter for a softer contrast */
+    color: #f0e9e7;
+    border-radius: 1px; /* Rounded corners for a softer look */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* More pronounced shadow for depth */
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effect */
+}
+
+.order-container:hover {
+    transform: translateY(-5px); /* Slight lift effect on hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Deeper shadow on hover */
+}
+
+.order-confirmation {
+    font-size: 28px; /* Increased size for better visibility */
+    color: #d5d5d5; /* Softer grey for better readability */
+    margin-bottom: 20px; /* More space below */
+    text-align: center;
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px; /* Match table with rounded corners */
+    overflow: hidden; /* Ensures rounded corners work with table */
+}
+
+.order-table thead {
+    background-color: #0a0a0a; /* Dark background */
+    color: #fff; /* White text */
+}
+
+.order-table th, .order-table td {
+    padding: 15px;
+    border: 1px solid #0a0a0a; /* Light border for table cells */
+    text-align: center;
+}
+
+.order-table th {
+    font-weight: bold;
+}
+
+.order-table td {
+    background-color: #2a2a2a; /* Darker grey for rows for contrast */
+    color: #f0e9e7; /* Light color for better readability */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.order-table td:hover {
+    background-color: #3a3a3a; /* Lighter grey on hover */
 }
 
 footer {
-    padding: 15px;
-    text-align: center;
-    background-color: #333;
+    background-color: #0a0a0a;
     color: #fff;
+    text-align: center;
+    padding: 10px 0;
     font-size: 14px;
+    margin-top: 20px; /* Adds space above the footer */
+}
+
+/* Admin Dashboard-specific styling */
+.admin-dashboard h1 {
+    font-size: 2em;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.admin-dashboard h2 {
+    font-size: 1.5em;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.admin-dashboard table {
+    width: 100%;
+    max-width: 1000px;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Other admin-specific styles */
+.admin-dashboard select, .admin-dashboard input[type="submit"] {
+    /* styling here */
+}
+
+/* =========Thank You Page Styling ================*/
+.thankyou {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Light background to match */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #333;
+}
+
+.thankyou h1 {
+    font-size: 2.5em;
+    color: #fff; /* Matching the brand's primary color (if red) */
+    margin-bottom: 0.5em;
+    text-align: center;
+}
+
+.thankyou p {
+    font-size: 1.2em;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 1.5em;
+}
+
+.thankyou a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #fff; /* Button color to match brand */
+    color: #0a0a0a;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.thankyou a:hover {
+    background-color: #b71c1c; /* Darker shade on hover */
+}
+
+/* Centering content */
+.thankyou > div {
+    text-align: center;
+    padding: 2em;
+    background-color: #0a0a0a;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 90%;
 }
