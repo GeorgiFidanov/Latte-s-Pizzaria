@@ -7,19 +7,6 @@
     <title>Menu - Mario and Luigi Pizzeria</title>
 </head>
 <body>
-    <h1>Our Pizza Menu</h1>
-    <form method="POST" action="{{ url_for('menu') }}">
-        {% for pizza in pizzas %}
-            <div>
-                <label>{{ pizza.name }} - ${{ pizza.price }}</label>
-                <input type="number" name="{{ pizza.name }}" min="0" value="0">
-            </div>
-        {% endfor %}
-        <button type="submit">Add to Order</button>
-    </form>
-    <a href="{{ url_for('logout') }}">Logout</a>
-    <a href="{{ url_for('delete_profile') }}">Delete Profile</a>
-
     <header class="header">
         <div class="logo">
             <img src="static/logo1.png" alt="Pizzeria Logo"> <!-- Update with logo path -->
@@ -66,6 +53,5 @@
     <footer>
         <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
     </footer>
-
 </body>
 </html>

@@ -47,30 +47,6 @@
         </div>
     </main>
 
-
-    <h1>Your Order</h1>
-    <ul>
-        {% for pizza, quantity in order.items() %}
-            <li>{{ pizza }}: {{ quantity }}</li>
-        {% endfor %}
-    </ul>
-    <form method="POST">
-        <h3>Choose Payment Method</h3>
-        <input type="radio" name="payment_method" value="card" required> Card Payment
-        <input type="radio" name="payment_method" value="cash" required> Cash Payment
-        <button type="submit">Proceed to Payment</button>
-    </form>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <ul class="flash-messages">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% endwith %}
-
     <footer>
         <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
     </footer>

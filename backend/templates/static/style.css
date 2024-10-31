@@ -322,3 +322,254 @@ footer {
     max-width: 500px;
     width: 90%;
 }
+
+/* CSS for the About Us Page */
+body.aboutus .header {
+    background-color: #0a0a0a; /* Dark background for header */
+    padding: 20px; /* Padding around header */
+    display: flex; /* Flex layout for logo and navigation */
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space between logo and navbar */
+}
+
+body.aboutus .logo img {
+    height: 50px; /* Set logo height */
+}
+
+body.aboutus .navbar a {
+    color: #f0e9e7; /* Light text color for navigation */
+    padding: 10px 15px; /* Padding for nav links */
+    text-decoration: none; /* Remove underline */
+}
+
+body.aboutus .navbar a:hover {
+    background-color: #d5d5d5; /* Background on hover */
+    color: #0a0a0a; /* Text color on hover */
+}
+
+body.aboutus .about-main-content {
+    max-width: 800px; /* Maximum width for content */
+    margin-left: 1px; /* Center content horizontally */
+    margin-top: 120px;
+    padding: 10px; /* Padding for content */
+    background-color: #0a0a0a; /* Dark background */
+    color: #f0e9e7; /* Light text color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+}
+
+body.aboutus .main-content h1 {
+    font-size: 32px; /* Size for main heading */
+    color: #d5d5d5; /* Softer grey for heading */
+    margin-bottom: 20px; /* Space below heading */
+    text-align: left; /* Left align the heading */
+}
+
+body.aboutus .story-section h2, 
+body.aboutus .contact-info h2 {
+    font-size: 14px; /* Size for section headings */
+    margin-top: 20px; /* Space above section headings */
+    color: #f0e9e7; /* Light color for section headings */
+}
+
+body.aboutus .story-section p {
+    font-size: 18px; /* Size for paragraph text */
+    margin-bottom: 20px; /* Space below paragraphs */
+    color: #f0e9e7; /* Light text color */
+}
+
+body.aboutus .contact-info h3 {
+    font-size: 20px; /* Size for contact heading */
+    color: #f0e9e7; /* Light color for contact heading */
+}
+
+body.aboutus .contact-info ul {
+    list-style-type: none; /* Remove default list styling */
+    padding: 0; /* Remove padding */
+}
+
+body.aboutus .contact-info ul li {
+    margin: 10px 0; /* Space between list items */
+}
+
+body.aboutus .contact-info a {
+    color: #f0e9e7; /* Light color for social links */
+    text-decoration: none; /* Remove underline */
+}
+
+body.aboutus footer {
+    background-color: #0a0a0a; /* Dark footer */
+    color: #fff; /* White text in footer */
+    text-align: center; /* Center footer text */
+    padding: 10px 0; /* Padding for footer */
+    font-size: 14px; /* Footer font size */
+    margin-top: 20px; /* Space above footer */
+}
+
+body.aboutus footer a {
+    color: #f0e9e7; /* Light color for footer links */
+    text-decoration: none; /* Remove underline */
+}
+/* Login Box Styles */
+.login-box {
+    width: 100%;
+    max-width: 400px; /* Set a max width for better appearance */
+    background-color: rgba(255, 255, 255, 0.9); /* Light background with transparency */
+    padding: 30px; /* Changed padding to match Forgot Password styles */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow effect */
+    color: #0a0a0a; /* Ensuring text color matches */
+    text-align: center; /* Center align text */
+    margin: 20px auto; /* Space above and below the box */
+}
+
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Heading Styles */
+.login-box h1 {
+    font-size: 28px; /* Updated font size to match Forgot Password styles */
+    margin-bottom: 15px; /* Space below the title */
+    color: #0e0c0c; /* Dark text for title */
+}
+.login-box p {
+    font-size: 14px;
+    color: #0e0c0c;
+}
+
+/* Label Styles */
+.login-box label {
+    display: block;
+    text-align: left; /* Left-align labels */
+    margin-bottom: 5px; /* Space below labels */
+    font-size: 16px; /* Font size for labels */
+    color: #333; /* Dark color for labels */
+}
+
+/* Input Styles */
+.login-box input[type="text"],
+.login-box input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+/* Button Styles */
+.login-box button {
+    width: 100%;
+    margin: 10px;
+    padding: 12px;
+    background-color: #0f0d0d; /* Button background color */
+    color: #fff; /* Button text color */
+    font-size: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Smooth transition on hover */
+}
+
+/* Button Hover Effect */
+.login-box button:hover {
+    background-color: #cc4629; /* Darken on hover */
+}
+
+/* Footer Styles */
+footer {
+    background-color: #0a0a0a; /* Dark footer */
+    color: #ffffff; /* White text in footer */
+    text-align: center; /* Center footer text */
+    padding: 10px 0; /* Padding for footer */
+    font-size: 14px; /* Footer font size */
+}
+/* =============== REGISTRATION PAGE STYLES =============== */
+
+.register-container {
+    width: 100%;
+    max-width: 400px; /* Set a max width for better appearance */
+    background-color: rgba(255, 255, 255, 0.9); /* Light background with transparency */
+    padding: 30px; /* Changed padding to match Forgot Password styles */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow effect */
+    color: #0a0a0a; /* Ensuring text color matches */
+    text-align: left; /* Center align text */
+    margin: 20px auto; /* Space above and below the box */
+}
+
+.register-container h1 {
+    font-size: 2em;
+    color: #0a0a0a;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.register-container label {
+    display: block;
+    font-size: 1em;
+    color: #0a0a0a;
+    margin-top: 5px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="email"],
+.register-container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 1px 0;
+    border: 1px solid #0a0a0a;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #0a0a0a;
+    font-size: 1em;
+}
+
+.register-container input[type="text"]:focus,
+.register-container input[type="email"]:focus,
+.register-container input[type="password"]:focus {
+    outline: none;
+    margin: 1px 0;
+    border-color: #b71c1c; /* Highlight border on focus */
+    box-shadow: 0 0 5px rgba(183, 28, 28, 0.5); /* Red shadow on focus */
+}
+
+.register-container .register-button {
+    display: inline-block;
+    width: 100%;
+    padding: 5px;
+    margin-top: 15px;
+    background-color: #0a0a0a;
+    color: #fff;
+    text-align: center;
+    font-size: 1em;
+    font-weight: bold;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.register-container .register-button:hover {
+    background-color: #0a0a0a; /* Darker red on hover */
+}
+
+.register-container .register-footer {
+    font-size: 0.9em;
+    color: #d5d5d5;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.register-container .register-footer a {
+    color: #b71c1c;
+    text-decoration: none;
+}
+
+.register-container .register-footer a:hover {
+    color: #8a1414; /* Darker red on hover */
+}

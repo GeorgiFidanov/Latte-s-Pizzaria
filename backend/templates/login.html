@@ -1,33 +1,48 @@
 <!DOCTYPE html>
-<html lang="eng">
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
 </head>
 <body>
-    <h1>Login</h1>
-    <form method="POST" action="{{ url_for('login') }}">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-
-        <button type="submit">Login</button>
-        <a href="{{ url_for('forgot_password') }}">Forgot Password?</a>
-    </form>
-
-    <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a>.</p>
-    <p>Or <a href="{{ url_for('guest_order') }}">Continue as Guest</a></p>
-
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div class="flash-messages">
-            {% for category, message in messages %}
-                <div class="flash-message">{{ message }}</div>
-            {% endfor %}
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <img src="static/logo1.png" alt="Logo">
         </div>
-    {% endif %}
-    {% endwith %}
+        <nav class="navbar">
+            <a href="/menu">Menu</a>
+            <a href="/about">About Us</a>
+            <a href="/login">Sign In</a>
+            <a href="/register">Register</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="login-box">
+            <h1>Login</h1>
+            <form action="/login" method="post">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                
+                <button type="submit">Login</button>
+            </form>
+            
+            <p class="register-text">Don't have an account? <a href="/register" class="register-link">Register here</a></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Your Company. All rights reserved.</p>
+    </footer>
+
 </body>
 </html>
