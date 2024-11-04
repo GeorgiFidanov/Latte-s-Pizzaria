@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Thank You</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+</head>
+<body class="thankyou">
+
+    <header class="header">
+        <div class="logo">
+            <a href="{{ url_for('index') }}">
+              <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
+            </a>
+        </div>
+    </header>
+
+    <div>
+        <h1>Thank You!</h1>
+        <p>Your order has been successfully completed. We hope you enjoy your pizza!</p>
+        <a href="{{ url_for('menu') }}">Back to Menu</a>
+    </div>
+</body>
+</html>

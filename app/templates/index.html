@@ -4,17 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mario and Luigi Pizzeria</title>
-    <link rel="stylesheet" type="text/css" href="static\style.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
 </head>
 <body>
     <!-- Header Section -->
     <header class="header">
+        
         <div class="logo">
-            <img src="static/logo1.png" alt="Pizzeria Logo"> <!-- Flask path for logo -->
+            <a href="{{ url_for('index') }}">
+              <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
+            </a>
         </div>
+
         <nav class="navbar">
             <a href="{{ url_for('menu') }}">Menu</a>
-            <a href="{{ url_for('about') }}">About Us</a>
+            <a href="{{ url_for('about_us') }}">About Us</a>
             <a href="{{ url_for('login') }}">Sign In</a>
             <a href="{{ url_for('register') }}">Register</a>
         </nav>
@@ -25,7 +30,7 @@
         <div class="main-content-content">
             <h1>Mario and Luigi Pizzeria</h1>
             <p>Experience the best pizzas made with love!</p>
-            <a class="order-button" href="{{ url_for('order') }}">Order now</a>
+            <a class="order-button" href="{{ url_for('menu') }}">Order now</a>
         </div>
     </main>
 

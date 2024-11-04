@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Menu - Mario and Luigi Pizzeria</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+</head>
+<body>
+    <header class="header">
+
+        <div class="logo">
+            <a href="{{ url_for('index') }}">
+              <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
+            </a>
+        </div>
+        
+        <nav class="navbar">
+            <a href="{{ url_for('menu') }}" class="active">Menu</a>
+            <a href="{{ url_for('about_us') }}">About Us</a>
+            <a href="{{ url_for('login') }}">Sign In</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1>Our Menu</h1>
+        <form method="POST" action="{{ url_for('menu') }}">
+            <div class="menu-container">
+                <table class="pizza-menu">
+                    <thead>
+                        <tr>
+                            <th>Pizza Name</th>
+                            <th>Description</th>
+                            <th>Picture</th>
+                            <th>Quantity</th>
+                            <th>Price per pizza</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Pizza Margherita</td>
+                            <td>A classic pizza topped with fresh mozzarella and basil.</td>
+                            <td><img src="{{ url_for('static', filename='images/pizza1.webp') }}" alt="Mozzarella Pizza" class="pizza-image"></td>
+                            <td><input type="number" name="Margherita" min="0" max="10" value="{{ order_item.get('Margherita', 0) }}" class="quantity-input"></td>
+                            <td>€8</td>
+                        </tr>
+                        <tr>
+                            <td>Pizza Pepperoni</td>
+                            <td>Loaded with spicy pepperoni and mozzarella cheese.</td>
+                            <td><img src="{{ url_for('static', filename='images/pizza2.webp') }}" alt="Pepperoni Pizza" class="pizza-image"></td>
+                            <td><input type="number" name="Pepperoni" min="0" max="10" value="{{ order_item.get('Pepperoni', 0) }}" class="quantity-input"></td>
+                            <td>€10</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" class="order-button">Confirm order</button>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %} 
+        </form>
+    </main>
+    
+    <footer>
+        <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
+    </footer>
+</body>
+</html>

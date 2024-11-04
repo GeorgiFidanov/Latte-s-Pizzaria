@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <script>
+        // Refresh the page every 30 seconds
+        setInterval(function() {
+            window.location.reload();
+        }, 30000);  // 30000 milliseconds = 30 seconds
+    </script>
+</head>
+<body class="admin-dashboard">
+    <h1>Admin Dashboard</h1>
+    <h2>Recent Orders (Last Hour)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Username</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Change Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.username }}</td>
+                <td>
+                    {% for item in order.order_summary %}
+                        {{ item.quantity }} {{ item.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ order.total_amount }}</td>
+                <td>{{ order.status }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('admin') }}">
+                        <select name="status">
+                            <option value="Paid" {% if order.status == 'Paid' %}selected{% endif %}>Paid</option>
+                            <option value="Ready" {% if order.status == 'Ready' %}selected{% endif %}>Ready</option>
+                            <option value="Completed" {% if order.status == 'Completed' %}selected{% endif %}>Completed</option>
+                            <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                        </select>
+                        <input type="hidden" name="order_id" value="{{ order._id }}">
+                        <input type="submit" value="Update">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

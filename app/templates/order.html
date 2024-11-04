@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Your Order - Mario and Luigi Pizzeria</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+</head>
+<body>
+    <header class="header">
+
+        <div class="logo">
+            <a href="{{ url_for('index') }}">
+              <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
+            </a>
+        </div>
+        
+        <nav class="navbar">
+            <a href="{{ url_for('menu') }}">Menu</a>
+            <a href="{{ url_for('about_us') }}">About Us</a>
+            <a href="{{ url_for('login') }}">Sign In</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1>Your Order</h1>
+        <p>Estimated completion time: {{ estimated_time.strftime('%H:%M') }}</p>
+
+        <div class="order-container">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Pizza Name</th>
+                        <th>Quantity</th>
+                        <th>Price per Pizza</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_summary %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>€{{ item.price_per_item }}</td>
+                        <td>€{{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3">Total Amount</th>
+                        <th>€{{ total_amount }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+
+
+        <form method="POST" action="{{ url_for('order') }}">
+            <button type="submit" name="edit_order" class="edit-button">Edit Order</button>
+            <button type="submit" name="delete_order" class="delete-button">Delete Order</button>
+
+            <h2>Choose Payment Method</h2>
+            <label>
+                <input type="radio" name="payment_method" value="card" required> Card
+            </label>
+            <label>
+                <input type="radio" name="payment_method" value="cash"> Cash
+            </label>
+            <button type="submit" class="btn">Proceed to Payment</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
+    </footer>
+</body>
+</html>

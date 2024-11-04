@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Screen</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+
+</head>
+<body class="screen-page">
+    <h1>Orders Ready for Pickup</h1>
+    <div id="order-list">
+        {% for order in orders %}
+        <div class="screen-order-container">
+            <div class="order-id">Order #{{ order.order_id }}</div>
+            <div class="order-items">
+                {% for item in order.order_summary %}
+                    {{ item.quantity }} {{ item.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+            <div class="order-status">Ready to Pick Up!</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        setInterval(function() {
+            location.reload();
+        }, 10000);  // Refresh every 10 seconds
+    </script>
+</body>
+</html>

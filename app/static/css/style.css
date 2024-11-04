@@ -12,7 +12,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh; /* Ensures the body is at least as tall as the viewport */
-    background-image: url('back1.jpg'); /* Background image */
+    background-image: url('../images/back1.jpg'); /* Background image */
     background-size: cover; /* Ensures the image covers the entire background */
     background-position: center;
     background-attachment: fixed; /* Keeps the image fixed as you scroll */
@@ -349,8 +349,21 @@ body.aboutus .navbar a:hover {
 
 body.aboutus .about-main-content {
     max-width: 800px; /* Maximum width for content */
+    width: 100%;
     margin-left: 1px; /* Center content horizontally */
     margin-top: 120px;
+    padding: 10px; /* Padding for content */
+    background-color: #0a0a0a; /* Dark background */
+    color: #f0e9e7; /* Light text color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+
+}
+
+body.aboutus .about-main-content {
+    max-width: 800px; /* Maximum width for content */
+    width: 100%; /* Allows the box to be responsive */
+    margin: 120px auto; /* Center horizontally and add top margin */
     padding: 10px; /* Padding for content */
     background-color: #0a0a0a; /* Dark background */
     color: #f0e9e7; /* Light text color */
@@ -572,4 +585,100 @@ footer {
 
 .register-container .register-footer a:hover {
     color: #8a1414; /* Darker red on hover */
+}
+
+
+.flash-messages {
+    margin-top: 10px;
+}
+
+.flash-message {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.flash-message.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.flash-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.flash-message.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.flash-message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.terms-conditions-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.terms-content {
+    max-width: 800px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: left;
+}
+
+.terms-content h1, .terms-content h2 {
+    color: #333;
+}
+
+.terms-content button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.screen-page {
+    background-color: #101010;
+    color: #f9f9f9;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+}
+.screen-order-container {
+    max-width: 800px;
+    width: 90%;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    background-color: #282828;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+.order-id {
+    font-size: 24px;
+    font-weight: bold;
+}
+.order-items {
+    font-size: 18px;
+}
+.order-status {
+    font-size: 20px;
+    color: #28a745; /* Green color for 'Ready' status */
+    margin-top: 5px;
 }
