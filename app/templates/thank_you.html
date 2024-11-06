@@ -1,24 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Thank You</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+        <title>Thank You!</title>
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    </head>
 <body class="thankyou">
-
-    <header class="header">
-        <div class="logo">
-            <a href="{{ url_for('index') }}">
-              <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
-            </a>
-        </div>
-    </header>
 
     <div>
         <h1>Thank You!</h1>
-        <p>Your order has been successfully completed. We hope you enjoy your pizza!</p>
+        <p>Your order has been successfully paid and now is being prepared. We hope you enjoy your pizza!</p>
+        {% if estimated_time %}
+            <p>Estimated completion time: <strong>{{estimated_time.strftime('%H:%M') }}</strong></p>
+        {% endif %}
+        
+        <p>Your order number is <strong>{{ order_id }}</strong></p>
+
         <a href="{{ url_for('menu') }}">Back to Menu</a>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %} 
     </div>
+    
+    <script>
+        setInterval(function() {
+            location.reload();
+        }, 60000);  // Refresh every 1 minute to check status
+    </script>
+
+    <footer>
+        <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
+    </footer>
 </body>
 </html>

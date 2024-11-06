@@ -11,20 +11,28 @@
 
     <!-- Header -->
     <header class="header">
-
         <div class="logo">
             <a href="{{ url_for('index') }}">
-              <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
+                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
             </a>
         </div>
         
         <nav class="navbar">
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('about_us') }}">About Us</a>
-            <a href="{{ url_for('login') }}">Sign In</a>
-            <a href="{{ url_for('register') }}">Register</a>
+            
+            {% if session.get('username') %}
+                {% if session['username'] not in ['Guest', 'Admin'] %}
+                    <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Sign In</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
         </nav>
     </header>
+    
 
     <!-- Main Content -->
     <div class="main-content">
@@ -37,7 +45,7 @@
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
                 
-                <button type="submit">Login</button>
+                <label for="username"><button type="submit">Login</button></label>
 
                 <!-- Flash Messages -->
                 {% with messages = get_flashed_messages(with_categories=true) %}

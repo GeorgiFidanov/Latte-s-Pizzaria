@@ -7,10 +7,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 from bson import ObjectId
-
+import stripe
+from flask_apscheduler import APScheduler
 
 load_dotenv()
 mongoDB_connection = os.getenv("mongoDB_connection")
+stripe.api_key = os.getenv("STRIPE_API_KEY")
 
 
 app = Flask(__name__)
@@ -22,15 +24,20 @@ client = MongoClient(mongoDB_connection)
 db = client['Latte\'s_Pizzeria']
 users_collection = db['Users']
 orders_collection = db['Orders']
+coupons_collection = db['Coupons']
 
 
+# app.config['MAIL_DEBUG'] = True
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.getenv('EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.getenv('EMAIL_PASS')
-mail = Mail(app)
+app.config['SERVER_NAME'] = 'localhost:5000'
+app.config['PREFERRED_URL_SCHEME'] = 'http'
 
+mail = Mail(app)
+scheduler = APScheduler()
 
 # Track login attempts
 login_attempts = {}
@@ -53,25 +60,40 @@ def register():
         terms = request.form.get('terms')  # This will be 'on' if checked, otherwise None
         ads = request.form.get('ads')  # Same as previous
 
+        # Validate Username
+        if len(username) < 3:
+            flash('Username must be at least 3 characters long.', 'danger')
+            return render_template('register.html')
+
+        # Validate Email
+        if '@' not in email or '.' not in email.split('@')[1]:
+            flash('Please enter a valid email address.', 'danger')
+            return render_template('register.html')
+
         # Check if passwords match
         if password != confirm_password:
             flash('Passwords do not match. Please try again.', 'danger')
             return render_template('register.html')
 
-        # Check if the username already exists
+        # Check if the password is strong enough (at least 8 characters)
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long.', 'danger')
+            return render_template('register.html')
+
+        # Check if username already exists in the database
         if users_collection.find_one({'username': username}):
             flash('Username already exists. Please choose a different one.', 'danger')
             return render_template('register.html')
 
-        # Check if email already exists
+        # Check if email already exists in the database
         if users_collection.find_one({'email': email}):
             flash('Email already registered. Please use a different one.', 'danger')
             return render_template('register.html')
 
+        # Validate that terms and conditions are checked
         if terms is None:
             flash('You must agree to the terms and conditions.', 'danger')
             return render_template('register.html')
-
 
         # Hash the password for security
         hashed_password = generate_password_hash(password)
@@ -84,15 +106,44 @@ def register():
             'address': address,
             'gender': gender,
             'ad_preferences': bool(ads),
-            'agreed_to_terms': bool(terms)
+            'agreed_to_terms': True,
+            'confirmed' : False
         })
 
         # Log in the user automatically and redirect to the menu page
         session['username'] = username
         flash('Registration successful! Welcome to the pizzeria.', 'success')
+
+        user = users_collection.find_one({'username': username})
+        token = os.urandom(24).hex()  # Generating a simple confirm token
+        users_collection.update_one({'_id': user['_id']}, {'$set': {'confirm_token': token}})
+        confirm_url = url_for('profile_confirmation', token=token, _external=True)
+
+        msg = Message('Profile conformation', sender=os.getenv('EMAIL_USER'), recipients=[email])
+        msg.body = f'To confirm your profile, click the following link: {confirm_url}'
+        mail.send(msg)
+
+        flash('An email has been sent with instructions to reset your password.', 'info')
+
+
         return redirect(url_for('menu'))
 
     return render_template('register.html')
+
+
+@app.route('/profile_confirmation/<token>', methods=['GET', 'POST'])
+def profile_confirmation(token):
+    user = users_collection.find_one({'confirm_token': token})
+
+    if not user:
+        flash('Invalid or expired reset token.', 'danger')
+        return redirect(url_for('register'))
+
+    users_collection.update_one(
+                {'_id': user['_id']},
+                {'$set': {'confirmed': True, 'confirm_token': None}}
+            )
+    return redirect(url_for('index'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -121,11 +172,31 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/guest_order')
-def guest_order():
-    session['username'] = 'Guest'  # Set guest username
-    session['guest'] = True  # Set guest flag in session
-    return redirect(url_for('menu'))
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    # Assume user is logged in, fetch their data
+    user = users_collection.find_one({'username': session['username']})
+
+    if user == "Guest" or user == "Admin":
+        flash('Please log in to edit your profile.', 'danger')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        # Get updated data from form fields
+        updated_data = {
+            'username': request.form['username'],
+            'email': request.form['email'],
+            'address': request.form['address'],
+            'gender': request.form['gender'],
+            'ad_preferences': bool(request.form.get('ads'))
+        }
+
+        # Update user information in the database
+        users_collection.update_one({'username': session['username']}, {'$set': updated_data})
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('menu'))
+
+    return render_template('edit_profile.html', user=user)
 
 
 @app.route('/logout')
@@ -238,9 +309,9 @@ def order():
     total_amount = 0
 
     for name, quantity in order.items():
+        quantity = int(quantity)
         if quantity > 0:
             price_per_item = next((item['price'] for item in menu_items if item['name'] == name), 0)
-            total_price = price_per_item * quantity
             total_price = price_per_item * quantity
             total_amount += total_price
             order_summary.append({
@@ -249,6 +320,30 @@ def order():
                 'price_per_item': price_per_item,
                 'total_price': total_price
             })
+
+    # Check if promo code is applied
+    promo_code = request.form.get('promo_code')
+    discount = 0
+
+    if promo_code:
+        # Retrieve the coupon from the database
+        coupon = coupons_collection.find_one({"code": promo_code})
+        
+        if coupon:
+            # Check if the coupon has expired
+            expiration_date = coupon['expires_at']   # Convert from milliseconds
+            if expiration_date > datetime.now():
+                # Apply the discount based on the coupon value
+                if coupon['value'] == '10%':
+                    discount = total_amount * 0.10  # Apply 10% discount
+                    flash(f'Promo code applied! You get €{discount:.2f} off.', 'success')
+            else:
+                flash('This promo code has expired.', 'error')
+        else:
+            flash('Invalid promo code. Please try again.', 'error')
+
+    # Apply discount to total amount
+    total_amount -= discount
 
     if request.method == 'POST':
 
@@ -286,24 +381,29 @@ def order():
                 flash('You chose to pay with cash. Please pay at the counter upon pickup.', 'info')
                 return redirect(url_for('cash_payment', order_id=order_id))
 
-    return render_template('order.html', order_summary=order_summary, total_amount=total_amount, estimated_time=estimated_time)
+    return render_template('order.html', order_summary=order_summary, total_amount=total_amount)
 
 
 @app.route('/simulate_card_payment/<order_id>')
-def simulate_card_payment(order_id):
-    # Simulate successful card payment
-    order = orders_collection.find_one({'order_id': int(order_id)})  # Find the specific order
-    
+def simulate_card_payment(order_id):    
+    order = orders_collection.find_one({'order_id': int(order_id)})
     if order:
-        orders_collection.update_one(
-            {'order_id': int(order_id)}, 
-            {'$set': {'status': 'Paid'}}
+
+        """
+        # Use Stripe test card info for payment simulation
+        payment_intent = stripe.PaymentIntent.create(
+            amount=int(order['total_amount']), 
+            currency="euro",
+            payment_method_types=["card"]
         )
+        """
+        orders_collection.update_one({'order_id': int(order_id)}, {'$set': {'status': 'Paid'}})
         flash('Payment successful! Thank you for your order.', 'success')
+        return redirect(url_for('thank_you', order_id=order_id))
     else:
         flash('Order not found.', 'danger')
-    
-    return redirect(url_for('thank_you'))
+        return redirect(url_for('order'))
+            
 
 
 @app.route('/cash_payment/<order_id>')
@@ -313,15 +413,24 @@ def cash_payment(order_id):
 
     # Check if the order has been marked as 'Paid' by the admin
     if order and order['status'] == 'Paid':
-        return redirect(url_for('thank_you'))
+        flash('Payment successful! Thank you for your order.', 'success')
+        return redirect(url_for('thank_you', order_id=order_id))
 
     return render_template('cash_payment.html', order_id=order_id)
 
 
+@app.route('/thank_you/<order_id>')
+def thank_you(order_id):
+    order = orders_collection.find_one({'order_id': int(order_id)})
+    estimated_time = order['estimated_time']
 
-@app.route('/thank_you')
-def thank_you():
-    return render_template('thank_you.html')
+    if order['status'] == 'Ready':
+        flash('Your order is ready to pick up!', 'info')
+
+    if order['status'] == 'Completed':
+        flash('Order completed! Enjoy!', 'success')
+
+    return render_template('thank_you.html', estimated_time=estimated_time, order_id=order_id)
 
 
 @app.route('/about_us')
@@ -332,20 +441,6 @@ def about_us():
 @app.route('/terms_and_conditions')
 def terms_and_conditions():
     return render_template('terms_and_conditions.html')
-
-
-current_id = 0
-reset_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
-def get_id():
-    global current_id, reset_time
-    now = datetime.now()
-
-    if now >= reset_time:
-        current_id = 0
-        reset_time = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
-
-    current_id += 1
-    return current_id
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -381,6 +476,61 @@ def screen():
     return render_template('screen.html', orders=ready_orders)
 
 
+def generate_and_send_coupons():
+
+    with app.app_context():  # Ensure the app context is available
+        # Get all subscribed users
+        subscribed_users = users_collection.find({'ad_preferences': True})
+
+        # Generate a unique coupon code
+        coupon_code = f"{os.urandom(6).hex()}"
+
+        # Add coupon code to database with expiration in 2 days
+        coupon = {
+            'code': coupon_code,
+            'expires_at': datetime.now() + timedelta(days=2),
+            'value': '10%'
+        }
+        coupons_collection.insert_one(coupon)
+
+        # Send coupon email to each subscribed user
+        for user in subscribed_users:
+            email = user['email']
+            user_id = user['_id']
+            unsubscribe_url = url_for('unsubscribe', user_id=str(user_id), _external=True)
+            username = user['username']
+
+            gender = user['gender']
+            if gender == 'Male':
+                gender_term = ' Mr.'
+            elif gender == 'Female':
+                gender_term = ' Ms./Mrs.'
+            else:
+                gender_term = ''
+
+            msg = Message(f'Dear,{gender_term} {username}, \nYour New Coupon Code!', sender=os.getenv('EMAIL_USER'), recipients=[email])
+            msg.body = f"Your coupon code is {coupon_code}. It expires in 2 days.\n" \
+                       f"If you want to unsubscribe from future coupons, click here: {unsubscribe_url}"
+            mail.send(msg)
+
+
+scheduler.add_job(id='send_coupons', func=generate_and_send_coupons, trigger='interval', days=2)
+scheduler.start()
+
+
+@app.route('/unsubscribe/<user_id>', methods=['GET', 'POST'])
+def unsubscribe(user_id):
+    users_collection.update_one({'_id': ObjectId(user_id)}, {'$set': {'subscribed': False}})
+    flash("You have successfully unsubscribed from receiving future coupon emails.", 'info')
+    return redirect(url_for('index'))
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
+    scheduler.init_app(app)
+    scheduler.start()

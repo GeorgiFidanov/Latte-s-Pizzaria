@@ -9,24 +9,31 @@
 </head>
 <body>
     <header class="header">
-
         <div class="logo">
             <a href="{{ url_for('index') }}">
-              <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
+                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
             </a>
         </div>
         
         <nav class="navbar">
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('about_us') }}">About Us</a>
-            <a href="{{ url_for('login') }}">Sign In</a>
-            <a href="{{ url_for('register') }}">Register</a>
+            
+            {% if session.get('username') %}
+                {% if session['username'] not in ['Guest', 'Admin'] %}
+                    <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Sign In</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
         </nav>
     </header>
+    
 
     <main class="main-content">
         <h1>Your Order</h1>
-        <p>Estimated completion time: {{ estimated_time.strftime('%H:%M') }}</p>
 
         <div class="order-container">
             <table class="order-table">
@@ -55,22 +62,47 @@
                     </tr>
                 </tfoot>
             </table>
+
+            <form method="POST" action="{{ url_for('order') }}" class="action-buttons">
+                <button type="submit" name="edit_order" class="edit-order-btn">Edit Order</button>
+                <button type="submit" name="delete_order" class="delete-order-btn">Delete Order</button>
+            </form>
+                
+            </div>
+                <!-- Promo Code Section -->
+            <div class="order-container">
+            <form method="POST" action="{{ url_for('order') }}">
+                <label for="promo_code">Have a promo code?</label>
+                <input type="text" id="promo_code" name="promo_code" placeholder="Enter promo code" value="{{ request.form.get('promo_code') }}">
+                <button type="submit" class="edit-order-btn">Apply Promo Code</button>
+            </form>
+
+            <br>
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                <div class="flash-message {{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            
         </div>
-
-
-
-        <form method="POST" action="{{ url_for('order') }}">
-            <button type="submit" name="edit_order" class="edit-button">Edit Order</button>
-            <button type="submit" name="delete_order" class="delete-button">Delete Order</button>
-
-            <h2>Choose Payment Method</h2>
-            <label>
-                <input type="radio" name="payment_method" value="card" required> Card
-            </label>
-            <label>
-                <input type="radio" name="payment_method" value="cash"> Cash
-            </label>
-            <button type="submit" class="btn">Proceed to Payment</button>
+        <form method="POST" action="{{ url_for('order') }}" class="order-container">
+            <div class="order-table">
+                <h2>Choose Your Payment Method</h2>
+                <label>
+                    <input type="radio" name="payment_method" value="card" required>
+                    <span>Card</span>
+                </label>
+                <label>
+                    <input type="radio" name="payment_method" value="cash">
+                    <span>Cash</span>
+                </label>
+                <button type="submit" name="procced_to_payment" class="procced-to-payment-btn">Proceed to Payment</button>
+            </div>
         </form>
     </main>
 

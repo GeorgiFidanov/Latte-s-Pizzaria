@@ -12,47 +12,51 @@
         }, 30000);  // 30000 milliseconds = 30 seconds
     </script>
 </head>
-<body class="admin-dashboard">
-    <h1>Admin Dashboard</h1>
-    <h2>Recent Orders (Last Hour)</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Username</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Change Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for order in orders %}
-            <tr>
-                <td>{{ order.order_id }}</td>
-                <td>{{ order.username }}</td>
-                <td>
-                    {% for item in order.order_summary %}
-                        {{ item.quantity }} {{ item.name }}{% if not loop.last %}, {% endif %}
-                    {% endfor %}
-                </td>
-                <td>{{ order.total_amount }}</td>
-                <td>{{ order.status }}</td>
-                <td>
-                    <form method="POST" action="{{ url_for('admin') }}">
-                        <select name="status">
-                            <option value="Paid" {% if order.status == 'Paid' %}selected{% endif %}>Paid</option>
-                            <option value="Ready" {% if order.status == 'Ready' %}selected{% endif %}>Ready</option>
-                            <option value="Completed" {% if order.status == 'Completed' %}selected{% endif %}>Completed</option>
-                            <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
-                        </select>
-                        <input type="hidden" name="order_id" value="{{ order._id }}">
-                        <input type="submit" value="Update">
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<body class="dashboard">
+    <header class="dashboard__header">
+        <h1 class="dashboard__title">Admin Dashboard</h1>
+        <h2 class="dashboard__subtitle">Recent Orders (Last Hour)</h2>
+    </header>
+    <section class="dashboard__orders">
+        <table class="orders-table">
+            <thead class="orders-table__header">
+                <tr class="orders-table__header-row">
+                    <th class="orders-table__header-cell">Order ID</th>
+                    <th class="orders-table__header-cell">Username</th>
+                    <th class="orders-table__header-cell">Items</th>
+                    <th class="orders-table__header-cell">Total</th>
+                    <th class="orders-table__header-cell">Status</th>
+                    <th class="orders-table__header-cell">Change Status</th>
+                </tr>
+            </thead>
+            <tbody class="orders-table__body">
+                {% for order in orders %}
+                <tr class="orders-table__row">
+                    <td class="orders-table__cell">{{ order.order_id }}</td>
+                    <td class="orders-table__cell">{{ order.username }}</td>
+                    <td class="orders-table__cell">
+                        {% for item in order.order_summary %}
+                            {{ item.quantity }} {{ item.name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td class="orders-table__cell">{{ order.total_amount }}</td>
+                    <td class="orders-table__cell">{{ order.status }}</td>
+                    <td class="orders-table__cell">
+                        <form method="POST" action="{{ url_for('admin') }}" class="status-form">
+                            <select name="status" class="status-form__select">
+                                <option value="Paid" {% if order.status == 'Paid' %}selected{% endif %}>Paid</option>
+                                <option value="Ready" {% if order.status == 'Ready' %}selected{% endif %}>Ready</option>
+                                <option value="Completed" {% if order.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                            <input type="hidden" name="order_id" value="{{ order._id }}">
+                            <input type="submit" value="Update" class="status-form__submit">
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
 </body>
 </html>

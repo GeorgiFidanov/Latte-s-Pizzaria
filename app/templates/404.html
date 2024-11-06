@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cash Payment</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>404 - Error</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
 </head>
-
-<body class="aboutus">
-
+<body>
     <header class="header">
         <div class="logo">
             <a href="{{ url_for('index') }}">
@@ -34,33 +32,19 @@
     </header>
     
 
-    <main class="about-main-content">
-        <article class="main-content">
-            <h1>Awaiting Payment Confirmation</h1>
-            <p>Please proceed to the counter for payment. Once paid, you will be redirected to your order page.</p>
-            <p>Your order number is <strong>{{ order_id }}</strong></p>
-            <!-- Flash Messages -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="flash-messages">
-                        {% for category, message in messages %}
-                            <div class="flash-message {{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %} 
-        </article>
-    </main>
+    <main class="main-content">
+        <div class="error-container">
+            <h1>404</h1>
+            <p>Mamma Mia! Page not found. It is like dropping pizza on the ground...</p>
+            <p>The page you're looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
+            
+            <a class="order-button" href="{{ url_for('index') }}">Go back to home</a>
 
+        </div>
+    </main>
+    
     <footer>
         <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
-    </footer>
-
-    <script>
-        setInterval(function() {
-            location.reload();
-        }, 5000);  // Refresh every 5 seconds to check status
-    </script>
-
+    </footer>    
 </body>
 </html>

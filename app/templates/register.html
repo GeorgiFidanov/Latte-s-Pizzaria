@@ -8,21 +8,28 @@
 <body>
     <!-- Header with navigation bar -->
     <header class="header">
-
         <div class="logo">
             <a href="{{ url_for('index') }}">
-              <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
+                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
             </a>
         </div>
-          
+        
         <nav class="navbar">
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('about_us') }}">About Us</a>
-            <a href="{{ url_for('login') }}">Sign In</a>
-            <a href="{{ url_for('register') }}">Register</a>
+            
+            {% if session.get('username') %}
+                {% if session['username'] not in ['Guest', 'Admin'] %}
+                    <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Sign In</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
         </nav>
-
     </header>
+    
 
     <!-- Registration form container -->
     <div class="register-container">
@@ -50,21 +57,31 @@
             <input type="text" id="address" name="address" required><br><br>
 
             <!-- Gender -->
-            <label>Gender:</label><br>
-            <input type="radio" id="male" name="gender" value="Male" required>
-            <label for="male">Male</label><br>
-            <input type="radio" id="female" name="gender" value="Female">
-            <label for="female">Female</label><br>
-            <input type="radio" id="other" name="gender" value="Other">
-            <label for="other">Other</label><br><br>
+            <div class="gender-options">
+                <label for="gender">Gender:</label><br>
+                <input type="radio" id="male" name="gender" value="Male" required>
+                <label for="male">Male</label><br>
+                <input type="radio" id="female" name="gender" value="Female">
+                <label for="female">Female</label><br>
+                <input type="radio" id="other" name="gender" value="Other">
+                <label for="other">Other</label>
+            </div>
+            <br>
 
-            <!-- Terms and Conditions -->
-            <input type="checkbox" id="terms" name="terms" required>
-            <label for="terms">I agree to the <a href="{{ url_for('terms_and_conditions') }}">Terms and Conditions</a></label><br><br>
 
+            <div class="checkbox-group">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms">I agree to the <a href="{{ url_for('terms_and_conditions') }}">Terms and Conditions</a></label>
+            </div>
+            
             <!-- Ad Preferences -->
-            <input type="checkbox" id="ads" name="ads">
-            <label for="ads">I would like to receive promotional offers and updates</label><br><br>
+            <div class="checkbox-group">
+                <input type="checkbox" id="ads" name="ads">
+                <label for="ads">I would like to receive promotional offers and updates</label>
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="register-button">Register</button>
             
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -75,9 +92,6 @@
                     </div>
                 {% endif %}
             {% endwith %}   
-
-            <!-- Submit Button -->
-            <input type="submit" value="Register">
         </form>
 
         
@@ -103,6 +117,7 @@
             });
         </script>
 
+        <br>
         <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a>.</p>
         <p>Or <a href="{{ url_for('menu') }}">Continue as Guest</a></p>
     </div>

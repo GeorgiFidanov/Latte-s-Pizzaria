@@ -9,43 +9,51 @@
 </head>
 <body class="aboutus"> <!-- Added class here -->
 
-<header class="header">
+    <header class="header">
+        <div class="logo">
+            <a href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
+            </a>
+        </div>
+        <nav class="navbar">
+            <a href="{{ url_for('menu') }}">Menu</a>
+    
+            {% if session['username'] == 'Guest' or session['username'] == 'Admin' %}
+                <a href="{{ url_for('login') }}">Sign In</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% else %}
+                <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+                <a href="{{ url_for('logout') }}">Log Out</a>
+                
+            {% endif %}
+        </nav>
+    </header>
+    
 
-    <div class="logo">
-        <a href="{{ url_for('index') }}">
-          <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
-        </a>
-    </div>
+    <main class="about-main-content">
+        <article class="main-content">
+            <h1>About Our Pizzeria</h1>
+            <section class="story-section">
+                <h2>The Story of Mario and Luigi</h2>
+                <p>Our pizzeria was founded by two brothers, Mario and Luigi, who came from Italy with their 
+                    family’s secret recipe. They had a dream to bring authentic Italian pizza to the heart of Eindhoven,
+                    and over the years, they have worked tirelessly to continue their family tradition. 
+                    Each pizza we make is a tribute to the rich heritage and passion that Mario and 
+                    Luigi pour into every dish, aiming to be the best pizzeria in town!</p>
+            </section>
 
-    <nav class="navbar">
-        <a href="{{ url_for('menu') }}">Menu</a>
-        <a href="{{ url_for('about_us') }}">About Us</a>
-        <a href="{{ url_for('login') }}">Sign In</a>
-        <a href="{{ url_for('register') }}">Register</a>
-    </nav>
-</header>
+            <section class="contact-info">
+                <h2>Contact Us: +315648975; lattespizza@gmail.com</h2>
+            </section>
+        </article>
+        <div class="iframe-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19896.25591423295!2d5.4984703999999995!3d51.4392064!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c6d9bc36b4ccd5%3A0x4beda48298b7a368!2sLombokpad!5e0!3m2!1sde!2snl!4v1730858291844!5m2!1sde!2snl" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" ></iframe>
+        </div>
+    </main>
 
-<main class="about-main-content">
-    <article class="main-content">
-        <h1>About Our Pizzeria</h1>
-        <section class="story-section">
-            <h2>The Story of Mario and Luigi</h2>
-            <p>Our pizzeria was founded by two brothers, Mario and Luigi, who came from Italy with their 
-                family’s secret recipe. They had a dream to bring authentic Italian pizza to the heart of Eindhoven,
-                 and over the years, they have worked tirelessly to continue their family tradition. 
-                 Each pizza we make is a tribute to the rich heritage and passion that Mario and 
-                 Luigi pour into every dish, aiming to be the best pizzeria in town!</p>
-        </section>
-
-        <section class="contact-info">
-            <h2>Contact Us: +315648975; lattespizza@gmail.com</h2>
-        </section>
-    </article>
-</main>
-
-<footer>
-    <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
-</footer>
+    <footer>
+        <p>&copy; 2024 Mario and Luigi Pizzeria. All rights reserved.</p>
+    </footer>
 
 </body>
 </html>

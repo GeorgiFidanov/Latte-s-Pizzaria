@@ -1,0 +1,14 @@
+previous orders page/logic
+
+Make sure: that the arduino works:
+-> The admin page should recieve a 'flash' notification which shows
+ the requests sent from the arduino when it has a ready order (from the oven)
+one of the buttons is used -> start a timer on the arduino(show how much a pizza should be in the oven)
+and the second button is used -> the arduino to tell the 'admin' that the pizza is ready 
+(in case he didn't hear the buzzer)
+
+stripes' payment page needs to finnished (but first they need to verify me)
+
+pages flow png is dated
+
+known bugs, sometimes logout when pressed from about_us page -> doesn't logout
