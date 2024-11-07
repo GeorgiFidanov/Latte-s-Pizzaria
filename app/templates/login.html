@@ -16,22 +16,21 @@
                 <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Pizzeria Logo">
             </a>
         </div>
-        
         <nav class="navbar">
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('about_us') }}">About Us</a>
-            
-            {% if session.get('username') %}
-                {% if session['username'] not in ['Guest', 'Admin'] %}
-                    <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
-                {% endif %}
-                <a href="{{ url_for('logout') }}">Logout</a>
+    
+            {% if session['username'] == 'Guest' or session['username'] == 'admin' %}
+
+                <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+                <a href="{{ url_for('logout') }}">Log Out</a>
+
             {% else %}
                 <a href="{{ url_for('login') }}">Sign In</a>
                 <a href="{{ url_for('register') }}">Register</a>
             {% endif %}
         </nav>
-    </header>
+    </header>>
     
 
     <!-- Main Content -->

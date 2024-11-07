@@ -3,34 +3,27 @@ import requests
 import json
 import time
 
-
-ser = serial.Serial("COM8", baudrate=9600, timeout=1)
-url = ""
+ser = serial.Serial("COM5", baudrate=9600, timeout=1)
+url = "http://localhost:5000/admin"  # Endpoint for Flask server
 
 while True:
-    # Check how many characters are in the serial buffer
     if ser.in_waiting > 0:
-        # Read the byte array, decode it to a string, and remove newline characters
         data = ser.readline().decode().strip()
+        print(f"Received data from Arduino: {data}")  # Debugging received data
 
         try:
-            # Parse the JSON-like data string
             sensor_data = json.loads(data)
-
-            # Send the data to the Flask server
-            response = requests.post(url, json=sensor_data)
-
-            # Check response status
-            if response.status_code == 200:
-                print("Data sent successfully:", sensor_data)
+            if sensor_data.get("message") == "pizza":
+                print("Preparing to send ready notification to server...")
+                response = requests.post(url, json=sensor_data)
+                if response.status_code == 200:
+                    print("Ready notification sent successfully.")
+                else:
+                    print("Failed to send notification:", response.text)
             else:
-                print("Failed to send data:", response.text)
+                print("Received data is not a 'pizza' status.")
 
         except json.JSONDecodeError:
             print("Error decoding JSON:", data)
 
-    time.sleep(1)  # Sleep briefly to avoid overwhelming the serial buffer
-
-
-
-# This file will be changed
+    time.sleep(1)

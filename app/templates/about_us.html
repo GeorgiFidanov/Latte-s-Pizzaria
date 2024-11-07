@@ -18,7 +18,7 @@
         <nav class="navbar">
             <a href="{{ url_for('menu') }}">Menu</a>
     
-            {% if session['username'] == 'Guest' or session['username'] == 'Admin' %}
+            {% if session['username'] == 'Guest' or session['username'] == 'admin' %}
                 <a href="{{ url_for('login') }}">Sign In</a>
                 <a href="{{ url_for('register') }}">Register</a>
             {% else %}

@@ -177,7 +177,7 @@ def edit_profile():
     # Assume user is logged in, fetch their data
     user = users_collection.find_one({'username': session['username']})
 
-    if user == "Guest" or user == "Admin":
+    if user == "Guest" or user == "admin":
         flash('Please log in to edit your profile.', 'danger')
         return redirect(url_for('login'))
     
@@ -443,6 +443,7 @@ def terms_and_conditions():
     return render_template('terms_and_conditions.html')
 
 
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     if 'username' not in session or session['username'] != 'admin':
@@ -460,6 +461,7 @@ def admin():
     recent_orders = list(orders_collection.find({'order_time': {'$gte': one_hour_ago}}))
 
     return render_template('admin.html', orders=recent_orders)
+
 
 
 @app.route('/screen')

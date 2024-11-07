@@ -1,0 +1,10 @@
+previous orders page/logic
+
+stripes' payment page needs to finnished (but first they need to verify me)
+
+pages flow png is dated
+
+arduino request to be fowarded to...
+
+fix styles and fonts on EVERY page
+

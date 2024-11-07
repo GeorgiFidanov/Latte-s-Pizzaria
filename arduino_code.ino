@@ -1,63 +1,61 @@
-#define BUTTON_1_PIN 9      // Pin for the first yellow button (Button 1)
-#define BUTTON_2_PIN 8      // Pin for the second yellow button (Button 2)
-#define BUZZER_PIN 3        // Pin for the buzzer
-#define CLK_PIN 10           // Clock pin for TM1637 display
-#define DIO_PIN 11           // Data pin for TM1637 display
+#include <TM1637Display.h>
 
-#include <TM1637Display.h> //You need to download the TM1637 library, its from the library tab on the left
+#define BUTTON_1_PIN 9      
+#define BUTTON_2_PIN 8      
+#define BUZZER_PIN 3        
+#define CLK_PIN 10          
+#define DIO_PIN 11          
+
 TM1637Display display(CLK_PIN, DIO_PIN);
 
-const int MAX_TIMERS = 10;  // Maximum number of timers that can be stored
-unsigned long timerDurations[MAX_TIMERS];  // Array to store timer durations
-int timerCount = 0;  // Number of timers in the queue
-int currentTimerIndex = 0;  // Index of the currently active timer
+const int MAX_TIMERS = 10;
+unsigned long timerDurations[MAX_TIMERS];
+int timerCount = 0;
+int currentTimerIndex = 0;
 unsigned long timerStart = 0;
 bool timerRunning = false;
 
 void setup() {
-  pinMode(BUTTON_1_PIN, INPUT_PULLUP);  // Set Button 1 as input with pull-up
-  pinMode(BUTTON_2_PIN, INPUT_PULLUP);  // Set Button 2 as input with pull-up
-  pinMode(BUZZER_PIN, OUTPUT);          // Set buzzer pin as output
+  Serial.begin(9600);  // Initialize Serial communication
+  pinMode(BUTTON_1_PIN, INPUT_PULLUP);
+  pinMode(BUTTON_2_PIN, INPUT_PULLUP);
+  pinMode(BUZZER_PIN, OUTPUT);
 
-  display.setBrightness(0x0f);          // Set display brightness to max
-  display.showNumberDecEx(0, 0b11100000, true); // Show '00:00' initially
+  display.setBrightness(0x0f);
+  display.showNumberDecEx(0, 0b11100000, true); 
 }
 
 void loop() {
-  // Check if Button 1 is pressed, and add a 10-minute timer
   if (digitalRead(BUTTON_1_PIN) == LOW) {
-    addTimer((60000)*10);  // 10 minutes in milliseconds
-    delay(300);  // Debounce delay
+    addTimer((10000));  
+    delay(300);  
   }
-  // Check if Button 2 is pressed, and add a 15-minute timer
   else if (digitalRead(BUTTON_2_PIN) == LOW) {
-    addTimer((60000)*15);  // 15 minutes in milliseconds
-    delay(300);  // Debounce delay
+    addTimer((60000)*15);  
+    delay(300);  
   }
 
-  // Start the next timer if not running and there are timers in the queue
   if (!timerRunning && currentTimerIndex < timerCount) {
     startTimer(timerDurations[currentTimerIndex]);
   }
 
-  // Update display if the timer is running
   if (timerRunning) {
     unsigned long elapsedTime = millis() - timerStart;
-    unsigned long remainingTime = (timerDurations[currentTimerIndex] - elapsedTime) / 1000;  // in seconds
+    unsigned long remainingTime = (timerDurations[currentTimerIndex] - elapsedTime) / 1000;
 
     if (remainingTime > 0) {
-      displayTime(remainingTime);  // Show remaining time on the display
+      displayTime(remainingTime);  
     } else {
       playBuzzerSound();
-      timerRunning = false;         // Stop the timer
-      currentTimerIndex++;          // Move to the next timer in the queue
-      display.showNumberDecEx(0, 0b11100000, true); // Show '00:00' briefly
-      delay(500);                   // Short delay before starting the next timer
+      sendReadyNotification();  // Notify server when pizza is ready
+      timerRunning = false;        
+      currentTimerIndex++;        
+      display.showNumberDecEx(0, 0b11100000, true); 
+      delay(500);
     }
   }
 }
 
-// Function to add a timer to the queue
 void addTimer(unsigned long duration) {
   if (timerCount < MAX_TIMERS) {
     timerDurations[timerCount] = duration;
@@ -65,27 +63,31 @@ void addTimer(unsigned long duration) {
   }
 }
 
-// Function to start a timer with a given duration
 void startTimer(unsigned long duration) {
   timerStart = millis();
   timerRunning = true;
 }
 
-// Function to display time in MM:SS format on the TM1637 display
 void displayTime(unsigned long timeInSeconds) {
   int minutes = timeInSeconds / 60;
   int seconds = timeInSeconds % 60;
-  int displayValue = (minutes * 100) + seconds;  // Convert to MMSS format
+  int displayValue = (minutes * 100) + seconds;
 
-  display.showNumberDecEx(displayValue, 0b11100000, true);  // Display MM:SS
+  display.showNumberDecEx(displayValue, 0b11100000, true);
 }
 
-// Function to play a sound on the buzzer
+
+
 void playBuzzerSound() {
   for (int i = 0; i < 3; i++) {        // Repeat beep 3 times
-    digitalWrite(BUZZER_PIN, HIGH);     // Turn on the buzzer
+    tone(BUZZER_PIN, 2000);    // Turn on the buzzer
     delay(200);                         // Buzzer on for 200 ms
-    digitalWrite(BUZZER_PIN, LOW);      // Turn off the buzzer
-    delay(200);                         // Delay before the next beep
+    noTone(BUZZER_PIN);     // Turn off the buzzer
+    delay(200);
   }
+}
+
+void sendReadyNotification() {
+  Serial.println("{\"message\":\"pizza\"}");
+  delay(1000);
 }

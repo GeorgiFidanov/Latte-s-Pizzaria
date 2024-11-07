@@ -737,6 +737,11 @@ footer {
     color: #0c5460;
 }
 
+.flash-message.pizza {
+    background-color: #f8b02a;
+    color: #0c5460;
+}
+
 .terms-conditions-page {
     display: flex;
     justify-content: center;
