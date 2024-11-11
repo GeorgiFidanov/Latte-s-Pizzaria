@@ -182,7 +182,7 @@ footer {
     padding: 20px;
     background-color: #1c1c1c; /* Slightly lighter for a softer contrast */
     color: #f0e9e7;
-    border-radius: 1px; /* Rounded corners for a softer look */
+    border-radius: 5px; /* Rounded corners for a softer look */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* More pronounced shadow for depth */
     transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effect */
 }
@@ -199,11 +199,15 @@ footer {
     text-align: center;
 }
 
+.order-table-wrapper {
+    overflow: hidden; /* Ensures rounded corners on the table */
+    border-radius: 8px; /* Rounded corners */
+}
+
 .order-table {
     width: 100%;
     border-collapse: collapse;
-    border-radius: 8px; /* Match table with rounded corners */
-    overflow: hidden; /* Ensures rounded corners work with table */
+    background-color: #333; /* Match this to your table's color */
 }
 
 .order-table thead {
@@ -252,7 +256,7 @@ footer {
     background-color: #f44336; /* Red for delete action */
 }
 
-.edit-order-btn, .delete-order-btn, .procced-to-payment-btn {
+.edit-order-btn, .delete-order-btn{
     background-color: #ff6600;
     color: #fff;
     border: none;
@@ -261,8 +265,23 @@ footer {
     cursor: pointer;
 }
 
-.edit-order-btn:hover, .delete-order-btn:hover, .procced-to-payment-btn:hover {
+.procced-to-payment-btn, .promocode-btn {
+    background-color: #ff6600;
+    color: #fff;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.edit-order-btn:hover, .delete-order-btn:hover, .procced-to-payment-btn, .promocode-btn:hover {
     background-color: #e06600;
+}
+
+.promocode-input {
+    padding: 4px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
 }
 
 footer {
@@ -419,30 +438,6 @@ footer {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 500px;
     width: 90%;
-}
-
-/* CSS for the About Us Page */
-body.aboutus .header {
-    background-color: #0a0a0a; /* Dark background for header */
-    padding: 20px; /* Padding around header */
-    display: flex; /* Flex layout for logo and navigation */
-    align-items: center; /* Center items vertically */
-    justify-content: space-between; /* Space between logo and navbar */
-}
-
-body.aboutus .logo img {
-    height: 50px; /* Set logo height */
-}
-
-body.aboutus .navbar a {
-    color: #f0e9e7; /* Light text color for navigation */
-    padding: 10px 15px; /* Padding for nav links */
-    text-decoration: none; /* Remove underline */
-}
-
-body.aboutus .navbar a:hover {
-    background-color: #d5d5d5; /* Background on hover */
-    color: #0a0a0a; /* Text color on hover */
 }
 
 body.aboutus .about-main-content {
@@ -842,3 +837,38 @@ iframe {
     max-width: 100%; /* Makes sure the iframe does not overflow */
     height: 450px;
 }
+
+
+/* Error Container Styling */
+.error-container {
+    max-width: 600px;
+    margin: 100px auto;
+    padding: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.error-container h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.error-container p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.error-container .order-button {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+

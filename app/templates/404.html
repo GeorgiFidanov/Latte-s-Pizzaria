@@ -20,21 +20,26 @@
             <a href="{{ url_for('about_us') }}">About Us</a>
             
             {% if session.get('username') %}
-                {% if session['username'] not in ['Guest', 'admin'] %}
+                {% if session['username'] == 'admin' %}
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                {% elif session['username'] == 'Guest' %}
+                    <a href="{{ url_for('login') }}">Sign In</a>
+                    <a href="{{ url_for('register') }}">Register</a>
+                {% else %}
                     <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
                 {% endif %}
-                <a href="{{ url_for('logout') }}">Logout</a>
             {% else %}
                 <a href="{{ url_for('login') }}">Sign In</a>
                 <a href="{{ url_for('register') }}">Register</a>
             {% endif %}
-        </nav>
+        </nav>        
     </header>
     
 
     <main class="main-content">
         <div class="error-container">
-            <h1>404</h1>
+            <h1><strong>{{pages}} </strong></h1>
             <p>Mamma Mia! Page not found. It is like dropping pizza on the ground...</p>
             <p>The page you're looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
             

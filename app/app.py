@@ -45,11 +45,20 @@ login_attempts = {}
 
 @app.route('/')
 def index():
+    if 'username' not in session:
+        session['username'] = 'Guest'
+        session['guest'] = True
+
     return render_template('index.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+
+    if 'username' not in session:
+        session['username'] = 'Guest'
+        session['guest'] = True
+
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
@@ -112,6 +121,7 @@ def register():
 
         # Log in the user automatically and redirect to the menu page
         session['username'] = username
+        session['guest'] = False
         flash('Registration successful! Welcome to the pizzeria.', 'success')
 
         user = users_collection.find_one({'username': username})
@@ -159,6 +169,7 @@ def login():
 
         if user and check_password_hash(user['password'], password):
             session['username'] = username
+            session['guest'] = False
             login_attempts[username] = 0  # Reset attempts on successful login
 
             if username == 'admin':
@@ -169,16 +180,24 @@ def login():
             login_attempts[username] = login_attempts.get(username, 0) + 1
             flash('Invalid username or password.', 'danger')
 
+    if 'username' not in session:
+        session['username'] = 'Guest'
+        session['guest'] = True
+
     return render_template('login.html')
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     # Assume user is logged in, fetch their data
+    if 'username' not in session:
+        session['username'] = 'Guest'
+        session['guest'] = True
+
     user = users_collection.find_one({'username': session['username']})
 
     if user == "Guest" or user == "admin":
-        flash('Please log in to edit your profile.', 'danger')
+        flash('Please, log in to edit your profile.', 'danger')
         return redirect(url_for('login'))
     
     if request.method == 'POST':
@@ -203,11 +222,17 @@ def edit_profile():
 def logout():
     session.pop('username', None)
     flash("You have been logged out.", 'info')
+    session['username'] = 'Guest'
+
     return redirect(url_for('login'))
 
 
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
+
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
         email = request.form['email']
         user = users_collection.find_one({'email': email})
@@ -295,10 +320,15 @@ def menu():
 @app.route('/order', methods=['GET', 'POST'])
 def order():
 
-    global menu_items
-    order = session.get('order', {})
+    if 'username' not in session:
+        session['username'] = 'Guest'
+        session['guest'] = True
 
-    if not any(order.values()):
+
+    global menu_items
+    client_order = session.get('order', {})
+
+    if not any(client_order.values()):
         flash("Your order is empty. Please add items from the menu.", 'error')
         return redirect(url_for('menu'))
     
@@ -308,7 +338,7 @@ def order():
     order_summary = []
     total_amount = 0
 
-    for name, quantity in order.items():
+    for name, quantity in client_order.items():
         quantity = int(quantity)
         if quantity > 0:
             price_per_item = next((item['price'] for item in menu_items if item['name'] == name), 0)
@@ -369,16 +399,15 @@ def order():
                 'status': 'Unpaid',
                 'payment_method': payment_method
             }
-            
-            orders_collection.insert_one(order_details)
-
             # Redirect based on payment method
             if payment_method == 'card':
                 flash('Processing card payment...', 'info')
+                orders_collection.insert_one(order_details)
                 return redirect(url_for('simulate_card_payment', order_id=order_id))
             
             elif payment_method == 'cash':
                 flash('You chose to pay with cash. Please pay at the counter upon pickup.', 'info')
+                orders_collection.insert_one(order_details)
                 return redirect(url_for('cash_payment', order_id=order_id))
 
     return render_template('order.html', order_summary=order_summary, total_amount=total_amount)
@@ -386,9 +415,9 @@ def order():
 
 @app.route('/simulate_card_payment/<order_id>')
 def simulate_card_payment(order_id):    
-    order = orders_collection.find_one({'order_id': int(order_id)})
-    if order:
+    card_order = orders_collection.find_one({'order_id': int(order_id)})
 
+    if card_order:
         """
         # Use Stripe test card info for payment simulation
         payment_intent = stripe.PaymentIntent.create(
@@ -409,10 +438,10 @@ def simulate_card_payment(order_id):
 @app.route('/cash_payment/<order_id>')
 def cash_payment(order_id):
 
-    order = orders_collection.find_one({'order_id': int(order_id)})
+    cash_order = orders_collection.find_one({'order_id': int(order_id)})
 
     # Check if the order has been marked as 'Paid' by the admin
-    if order and order['status'] == 'Paid':
+    if cash_order and cash_order['status'] == 'Paid':
         flash('Payment successful! Thank you for your order.', 'success')
         return redirect(url_for('thank_you', order_id=order_id))
 
@@ -421,13 +450,13 @@ def cash_payment(order_id):
 
 @app.route('/thank_you/<order_id>')
 def thank_you(order_id):
-    order = orders_collection.find_one({'order_id': int(order_id)})
-    estimated_time = order['estimated_time']
+    ready_order = orders_collection.find_one({'order_id': int(order_id)})
+    estimated_time = ready_order['estimated_time']
 
-    if order['status'] == 'Ready':
+    if ready_order['status'] == 'Ready':
         flash('Your order is ready to pick up!', 'info')
 
-    if order['status'] == 'Completed':
+    if ready_order['status'] == 'Completed':
         flash('Order completed! Enjoy!', 'success')
 
     return render_template('thank_you.html', estimated_time=estimated_time, order_id=order_id)
@@ -435,11 +464,19 @@ def thank_you(order_id):
 
 @app.route('/about_us')
 def about_us():
+    if 'username' not in session:
+        session['username'] = 'Guest'
+        session['guest'] = True
+
     return render_template('about_us.html')
 
 
 @app.route('/terms_and_conditions')
 def terms_and_conditions():
+    if 'username' not in session:
+        session['username'] = 'Guest'
+        session['guest'] = True
+
     return render_template('terms_and_conditions.html')
 
 
@@ -529,7 +566,10 @@ def unsubscribe(user_id):
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    if 'username' not in session:
+        session['username'] = 'Guest'
+        session['guest'] = True
+    return render_template('404.html', pages=e), 404
 
 
 if __name__ == '__main__':
